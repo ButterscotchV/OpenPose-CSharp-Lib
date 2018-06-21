@@ -55,7 +55,7 @@ namespace OpenPose
 		public float Y { get; private set; }
 		public float Score { get; private set; }
 
-		public BodyPoint bodyPoint { get; private set; }
+		public BodyPoint BodyPoint { get; private set; }
 
 		public KeyPoint2D(int pointNum, float x, float y, float score)
 		{
@@ -63,7 +63,7 @@ namespace OpenPose
 			Y = y;
 			Score = score;
 
-			bodyPoint = (BodyPoint)pointNum;
+			BodyPoint = (BodyPoint)pointNum;
 		}
 	}
 
@@ -74,7 +74,7 @@ namespace OpenPose
 		public float Z { get; private set; }
 		public float Score { get; private set; }
 
-		public BodyPoint bodyPoint { get; private set; }
+		public BodyPoint BodyPoint { get; private set; }
 
 		public KeyPoint3D(int pointNum, float x, float y, float z, float score)
 		{
@@ -83,7 +83,7 @@ namespace OpenPose
 			Z = z;
 			Score = score;
 
-			bodyPoint = (BodyPoint)pointNum;
+			BodyPoint = (BodyPoint)pointNum;
 		}
 	}
 }

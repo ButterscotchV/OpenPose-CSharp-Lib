@@ -11,11 +11,11 @@ namespace OpenPose
 			RegisteredPoseEvents.Add(poseListener);
 		}
 
-		public void ExecuteHandlers()
+		public void ExecuteHandlers(Pose2D pose)
 		{
 			foreach (IPoseEvent poseEvent in RegisteredPoseEvents)
 			{
-				poseEvent.OnPoseGenerated(new Pose2D());
+				poseEvent.OnPoseGenerated(pose);
 			}
 		}
 	}
