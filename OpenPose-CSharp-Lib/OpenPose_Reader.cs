@@ -21,9 +21,7 @@ namespace OpenPose
 		public OpenPose_Reader(string jsonFolderPath, IPoseEvent poseEvent)
 		{
 			poseEventHandler.RegisterPoseListener(poseEvent);
-
 			JSONFolderPath = jsonFolderPath;
-			JSONDirWatcher();
 		}
 
 		public void SynchronousQueueReader()
@@ -34,30 +32,46 @@ namespace OpenPose
 				if (PoseQueue.Count <= 0)
 				{
 					Thread.Sleep(QueueCheckDelay);
+					ProcessFiles();
+
 					continue;
 				}
 
+				// Parse saved text
 				JObject parsedPose = JObject.Parse(PoseQueue[0]);
+				PoseQueue.RemoveAt(0);
 
-				Console.WriteLine(parsedPose.ToString());
+				// Do JSON stuff to grab keypoints
 
-				poseEventHandler.ExecuteHandlers(new Pose2D(new KeyPoint2D[] { new KeyPoint2D(0, 1f, 2f, 3f) }));
+				//Console.WriteLine(parsedPose.ToString());
+
+				if (parsedPose["people"].HasValues && parsedPose["people"][0].HasValues)
+				{
+					//Console.WriteLine(parsedPose["people"].ToString());
+
+					//Console.WriteLine(parsedPose["people"][0].Value<JArray>("pose_keypoints_2d"));
+
+					//foreach (float f in parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>())
+					//{
+					//	Console.WriteLine(f);
+					//}
+
+					float[] keypoints = new List<float> (parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>()).ToArray();
+
+					poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints));
+				}
 			}
 		}
 
-		private void JSONDirWatcher()
+		public Thread AsynchronousQueueReader()
 		{
-			FileSystemWatcher watcher = new FileSystemWatcher
-			{
-				Path = JSONFolderPath,
-				NotifyFilter = NotifyFilters.LastWrite,
-				Filter = "*.*"
-			};
-			watcher.Changed += new FileSystemEventHandler(OnChanged);
-			watcher.EnableRaisingEvents = true;
+			Thread thread = new Thread(new ThreadStart(SynchronousQueueReader));
+			thread.Start();
+
+			return thread;
 		}
 
-		private void OnChanged(object source, FileSystemEventArgs e)
+		public void ProcessFiles()
 		{
 			string[] filePaths = Directory.GetFiles(JSONFolderPath);
 
@@ -67,9 +81,28 @@ namespace OpenPose
 				{
 					if (!RemainingQeueudFiles.Contains(file))
 					{
-						RemainingQeueudFiles.Add(file);
-						PoseQueue.Add(File.ReadAllText(file));
-						File.Delete(file);
+						try
+						{
+							PoseQueue.Add(File.ReadAllText(file));
+							RemainingQeueudFiles.Add(file);
+							File.Delete(file);
+						}
+						catch (IOException)
+						{
+							Console.WriteLine("IOException on \"" + file + "\". File is probably in-use by another program.");
+						}
+					}
+					else
+					{
+						try
+						{
+							File.Delete(file);
+							RemainingQeueudFiles.Remove(file);
+						}
+						catch (IOException)
+						{
+							Console.WriteLine("IOException on \"" + file + "\". File is probably in-use by another program.");
+						}
 					}
 				}
 			}

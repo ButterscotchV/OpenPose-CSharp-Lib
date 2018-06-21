@@ -65,6 +65,12 @@ namespace OpenPose
 
 			BodyPoint = (BodyPoint)pointNum;
 		}
+
+		override
+		public string ToString()
+		{
+			return "[" + BodyPoint + "]{(" + X + "," + Y + "), " + Score + "}";
+		}
 	}
 
 	public class KeyPoint3D
@@ -84,6 +90,12 @@ namespace OpenPose
 			Score = score;
 
 			BodyPoint = (BodyPoint)pointNum;
+		}
+
+		override
+		public string ToString()
+		{
+			return "[" + BodyPoint + "]{(" + X + "," + Y + "," + Z + "), " + Score + "}";
 		}
 	}
 }

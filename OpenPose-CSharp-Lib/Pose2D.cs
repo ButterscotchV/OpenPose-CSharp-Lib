@@ -5,7 +5,7 @@ namespace OpenPose
 {
 	public class Pose2D
 	{
-		List<KeyPoint2D> KeyPoints { get; } = new List<KeyPoint2D>();
+		public List<KeyPoint2D> KeyPoints { get; } = new List<KeyPoint2D>();
 
 		public Pose2D(KeyPoint2D[] keyPoints)
 		{
@@ -23,13 +23,13 @@ namespace OpenPose
 					// pointNum = 0 if less than 3, otherwise pointNum = current index divided by 3
 					keyPoints.Add(new KeyPoint2D((i < 3 ? 0 : i / 3), points[i], points[i + 1], points[i + 2]));
 				}
+
+				return new Pose2D(keyPoints.ToArray());
 			}
 			else
 			{
 				throw new Exception("Pose2D#ParseFloatArray() error: Float array is not divisible by 3.");
 			}
-
-			return null;
 		}
 	}
 }
