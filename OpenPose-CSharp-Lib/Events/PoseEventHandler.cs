@@ -2,7 +2,7 @@
 
 namespace OpenPose
 {
-	class PoseEventHandler
+	public class PoseEventHandler
 	{
 		public List<IPoseEvent> RegisteredPoseEvents { get; } = new List<IPoseEvent>();
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenPose
 {
-	enum BodyPoint
+	public enum BodyPoint
 	{
 		/*
 		 * Head
@@ -49,7 +49,7 @@ namespace OpenPose
 		Right_Heel = 10,
 	}
 
-	class KeyPoint2D
+	public class KeyPoint2D
 	{
 		public float X { get; private set; }
 		public float Y { get; private set; }
@@ -67,7 +67,7 @@ namespace OpenPose
 		}
 	}
 
-	class KeyPoint3D
+	public class KeyPoint3D
 	{
 		public float X { get; private set; }
 		public float Y { get; private set; }

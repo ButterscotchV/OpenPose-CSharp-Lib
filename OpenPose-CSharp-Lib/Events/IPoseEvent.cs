@@ -1,6 +1,6 @@
 ﻿namespace OpenPose
 {
-	interface IPoseEvent
+	public interface IPoseEvent
 	{
 		void OnPoseGenerated(Pose2D pose);
 	}

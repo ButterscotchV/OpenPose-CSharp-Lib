@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace OpenPose
 {
-    class OpenPose_Reader
+    public class OpenPose_Reader
     {
 		public string JSONFolderPath { get; private set; }
 		public int QueueCheckDelay = 10; // In milliseconds

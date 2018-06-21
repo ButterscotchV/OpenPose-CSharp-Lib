@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OpenPose
 {
-	class Pose2D
+	public class Pose2D
 	{
 		List<KeyPoint2D> KeyPoints { get; } = new List<KeyPoint2D>();
 
