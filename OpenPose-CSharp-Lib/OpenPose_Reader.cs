@@ -5,11 +5,19 @@ using System.Threading;
 
 namespace OpenPose
 {
+	public enum Model
+	{
+		COCO = 0,
+		MPI = 1
+	}
+
     public abstract class OpenPose_Reader
     {
 		public string JSONFolderPath { get; private set; }
 		public int QueueCheckDelay = 10; // In milliseconds
 		public bool StopQueue = false;
+
+		public static Model Model = Model.COCO;
 
 		public readonly List<string> PoseQueue = new List<string>(); // The queue of files to process
 		public readonly List<string> RemainingQeueudFiles = new List<string>(); // Files that have been queued

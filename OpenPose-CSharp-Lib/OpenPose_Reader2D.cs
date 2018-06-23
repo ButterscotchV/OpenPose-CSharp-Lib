@@ -9,6 +9,8 @@ namespace OpenPose
 {
     public class OpenPose_Reader2D : OpenPose_Reader
     {
+		public static bool Simulate3D = false;
+
 		public OpenPose_Reader2D(string jsonFolderPath, IPoseEvent poseEvent) : base(jsonFolderPath, poseEvent)
 		{
 		}
@@ -59,7 +61,14 @@ namespace OpenPose
 
 					float[] keypoints = new List<float> (parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>()).ToArray();
 
-					poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints));
+					if (Simulate3D)
+					{
+						poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints).Simulate3D());
+					}
+					else
+					{
+						poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints));
+					}
 				}
 			}
 		}

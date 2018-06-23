@@ -1,15 +1,16 @@
 ﻿namespace OpenPose.Pose
 {
+	// Second option after "or" is for MPI
 	public enum BodyPoint
 	{
 		/*
 		 * Head
 		 */
-		Nose = 0,
+		Nose_or_Top_Head = 0,
 		Bottom_Neck = 1,
 
 		// Right Head
-		Right_Eye = 14,
+		Right_Eye_or_Center_Body = 14,
 		Right_Ear = 16,
 
 		// Left Head
