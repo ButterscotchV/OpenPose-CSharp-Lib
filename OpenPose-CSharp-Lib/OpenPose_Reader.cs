@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
 namespace OpenPose
 {
-    public class OpenPose_Reader
+    public abstract class OpenPose_Reader
     {
 		public string JSONFolderPath { get; private set; }
 		public int QueueCheckDelay = 10; // In milliseconds
@@ -24,48 +22,11 @@ namespace OpenPose
 			JSONFolderPath = jsonFolderPath;
 		}
 
-		public void SynchronousQueueReader()
-		{
-			while (!StopQueue)
-			{
-				// If the queue is empty, run the delay for checking queue
-				if (PoseQueue.Count <= 0)
-				{
-					Thread.Sleep(QueueCheckDelay);
-					ProcessFiles();
-
-					continue;
-				}
-
-				// Parse saved text
-				JObject parsedPose = JObject.Parse(PoseQueue[0]);
-				PoseQueue.RemoveAt(0);
-
-				// Do JSON stuff to grab keypoints
-
-				//Console.WriteLine(parsedPose.ToString());
-
-				if (parsedPose["people"].HasValues && parsedPose["people"][0].HasValues)
-				{
-					//Console.WriteLine(parsedPose["people"].ToString());
-
-					//Console.WriteLine(parsedPose["people"][0].Value<JArray>("pose_keypoints_2d"));
-
-					//foreach (float f in parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>())
-					//{
-					//	Console.WriteLine(f);
-					//}
-
-					float[] keypoints = new List<float> (parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>()).ToArray();
-
-					poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints));
-				}
-			}
-		}
+		public abstract void QueueReader();
 
 		public Thread AsynchronousQueueReader()
 		{
-			Thread thread = new Thread(new ThreadStart(SynchronousQueueReader));
+			Thread thread = new Thread(new ThreadStart(QueueReader));
 			thread.Start();
 
 			return thread;
@@ -91,6 +52,10 @@ namespace OpenPose
 						{
 							Console.WriteLine("IOException on \"" + file + "\". File is probably in-use by another program.");
 						}
+						catch (UnauthorizedAccessException)
+						{
+							Console.WriteLine("UnauthorizedAccessException on \"" + file + "\". File is probably in-use by another program.");
+						}
 					}
 					else
 					{
@@ -102,6 +67,10 @@ namespace OpenPose
 						catch (IOException)
 						{
 							Console.WriteLine("IOException on \"" + file + "\". File is probably in-use by another program.");
+						}
+						catch (UnauthorizedAccessException)
+						{
+							Console.WriteLine("UnauthorizedAccessException on \"" + file + "\". File is probably in-use by another program.");
 						}
 					}
 				}

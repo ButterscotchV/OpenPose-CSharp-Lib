@@ -44,9 +44,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\IPoseEvent.cs" />
-    <Compile Include="KeyPoint.cs" />
+    <Compile Include="OpenPose_Reader3D.cs" />
+    <Compile Include="OpenPose_Reader2D.cs" />
+    <Compile Include="Pose\BodyPoint.cs" />
+    <Compile Include="Pose\KeyPoint.cs" />
+    <Compile Include="Pose\KeyPoint3D.cs" />
+    <Compile Include="Pose\KeyPoint2D.cs" />
     <Compile Include="OpenPose_Reader.cs" />
-    <Compile Include="Pose2D.cs" />
+    <Compile Include="Pose\Pose.cs" />
+    <Compile Include="Pose\Pose3D.cs" />
+    <Compile Include="Pose\Pose2D.cs" />
     <Compile Include="Events\PoseEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

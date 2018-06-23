@@ -2,6 +2,6 @@
 {
 	public interface IPoseEvent
 	{
-		void OnPoseGenerated(Pose2D pose);
+		void OnPoseGenerated(Pose.Pose pose);
 	}
 }

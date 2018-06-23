@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OpenPose
+namespace OpenPose.Pose
 {
-	public class Pose2D
+	public class Pose2D : Pose
 	{
-		public List<KeyPoint2D> KeyPoints { get; } = new List<KeyPoint2D>();
-
-		public Pose2D(KeyPoint2D[] keyPoints)
+		public Pose2D(KeyPoint[] keyPoints) : base(keyPoints)
 		{
-			KeyPoints.AddRange(keyPoints);
+		}
+
+		public KeyPoint2D GetKeyPoint2D(BodyPoint bodyPoint)
+		{
+			return (KeyPoint2D)base.GetKeyPoint(bodyPoint);
 		}
 
 		public static Pose2D ParseFloatArray(float[] points)
