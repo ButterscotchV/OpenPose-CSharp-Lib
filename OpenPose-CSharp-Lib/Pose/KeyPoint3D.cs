@@ -5,11 +5,11 @@ namespace OpenPose.Pose
 {
 	public class KeyPoint3D : KeyPoint
 	{
-		public float Raw_X { get; private set; }
-		public float Raw_Y { get; private set; }
-		public float Raw_Z { get; private set; }
+		public double Raw_X { get; private set; }
+		public double Raw_Y { get; private set; }
+		public double Raw_Z { get; private set; }
 
-		public float X
+		public double X
 		{
 			get
 			{
@@ -17,7 +17,7 @@ namespace OpenPose.Pose
 			}
 		}
 
-		public float Y
+		public double Y
 		{
 			get
 			{
@@ -25,7 +25,7 @@ namespace OpenPose.Pose
 			}
 		}
 
-		public float Z
+		public double Z
 		{
 			get
 			{
@@ -34,17 +34,17 @@ namespace OpenPose.Pose
 		}
 
 		// Maximums are used for inverting the values
-		public static float Max_X = 0;
-		public static float Max_Y = 720;
-		public static float Max_Z = 0;
+		public static double Max_X = 0;
+		public static double Max_Y = 720;
+		public static double Max_Z = 0;
 
 		// These should be in the unit meters per pixel (m/p)
-		public static float X_Scale_MPP = 1;
-		public static float Y_Scale_MPP = 1;
-		public static float Z_Scale_MPP = 1;
+		public static double X_Scale_MPP = 1;
+		public static double Y_Scale_MPP = 1;
+		public static double Z_Scale_MPP = 1;
 
 		// Scales but in pixels per meter (p/m)
-		public static float X_Scale_PPM
+		public static double X_Scale_PPM
 		{
 			get
 			{
@@ -57,7 +57,7 @@ namespace OpenPose.Pose
 			}
 		}
 
-		public static float Y_Scale_PPM
+		public static double Y_Scale_PPM
 		{
 			get
 			{
@@ -70,7 +70,7 @@ namespace OpenPose.Pose
 			}
 		}
 
-		public static float Z_Scale_PPM
+		public static double Z_Scale_PPM
 		{
 			get
 			{
@@ -83,7 +83,7 @@ namespace OpenPose.Pose
 			}
 		}
 
-		public KeyPoint3D(int pointNum, float x, float y, float z, float score)
+		public KeyPoint3D(int pointNum, double x, double y, double z, double score)
 		{
 			Raw_X = x;
 			Raw_Y = y;
@@ -91,6 +91,44 @@ namespace OpenPose.Pose
 			Score = score;
 
 			BodyPoint = (BodyPoint)pointNum;
+		}
+
+		public KeyPoint3D(BodyPoint bodyPoint, double x, double y, double z, double score)
+		{
+			Raw_X = x;
+			Raw_Y = y;
+			Raw_Z = z;
+			Score = score;
+
+			BodyPoint = bodyPoint;
+		}
+
+		public KeyPoint3D(int pointNum, double x, double y, double z, double score, double yaw, double pitch, double roll)
+		{
+			Raw_X = x;
+			Raw_Y = y;
+			Raw_Z = z;
+			Score = score;
+
+			Yaw = yaw;
+			Pitch = pitch;
+			Roll = roll;
+
+			BodyPoint = (BodyPoint)pointNum;
+		}
+
+		public KeyPoint3D(BodyPoint bodyPoint, double x, double y, double z, double score, double yaw, double pitch, double roll)
+		{
+			Raw_X = x;
+			Raw_Y = y;
+			Raw_Z = z;
+			Score = score;
+
+			Yaw = yaw;
+			Pitch = pitch;
+			Roll = roll;
+
+			BodyPoint = bodyPoint;
 		}
 
 		override

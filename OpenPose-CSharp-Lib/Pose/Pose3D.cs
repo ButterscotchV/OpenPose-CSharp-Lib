@@ -14,7 +14,12 @@ namespace OpenPose.Pose
 			return (KeyPoint3D)base.GetKeyPoint(bodyPoint);
 		}
 
-		public static Pose3D ParseFloatArray(float[] points)
+		public KeyPoint3D GetKeyPoint3D(int index)
+		{
+			return (KeyPoint3D)base.GetKeyPoint(index);
+		}
+
+		public static Pose3D ParseDoubleArray(double[] points)
 		{
 			if (points.Length % 4 == 0)
 			{
@@ -30,7 +35,7 @@ namespace OpenPose.Pose
 			}
 			else
 			{
-				throw new Exception("Pose3D#ParseFloatArray() error: Float array is not divisible by 4.");
+				throw new Exception("Pose3D#ParseDoubleArray() error: Double array is not divisible by 4.");
 			}
 		}
 	}

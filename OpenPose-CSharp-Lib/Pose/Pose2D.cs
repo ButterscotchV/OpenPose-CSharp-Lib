@@ -14,7 +14,12 @@ namespace OpenPose.Pose
 			return (KeyPoint2D)base.GetKeyPoint(bodyPoint);
 		}
 
-		public static Pose2D ParseFloatArray(float[] points)
+		public KeyPoint2D GetKeyPoint2D(int index)
+		{
+			return (KeyPoint2D)base.GetKeyPoint(index);
+		}
+
+		public static Pose2D ParseDoubleArray(double[] points)
 		{
 			if (points.Length % 3 == 0)
 			{
@@ -30,41 +35,80 @@ namespace OpenPose.Pose
 			}
 			else
 			{
-				throw new Exception("Pose2D#ParseFloatArray() error: Float array is not divisible by 3.");
+				throw new Exception("Pose2D#ParseDoubleArray() error: Double array is not divisible by 3.");
 			}
 		}
 
 		public Pose3D Simulate3D()
 		{
-			if (OpenPose_Reader.Model == Model.COCO)
+			//KeyPoint2D centerPoint = GetKeyPoint2D(BodyPoint.Center_Body);
+
+			List<KeyPoint3D> temp = new List<KeyPoint3D>();
+
+			foreach (KeyPoint2D keypoint in KeyPoints)
 			{
-
-			}
-			else if (OpenPose_Reader.Model == Model.MPI)
-			{
-				//KeyPoint2D centerPoint = GetKeyPoint2D(BodyPoint.Center_Body);
-
-				List<KeyPoint3D> temp = new List<KeyPoint3D>();
-
-				foreach (KeyPoint2D keypoint in KeyPoints)
+				if (keypoint.IsValid && keypoint.BodyPoint == BodyPoint.Left_Wrist)
 				{
-					if (keypoint.IsValid && keypoint.BodyPoint == BodyPoint.Left_Wrist)
+					KeyPoint2D leftElbow = GetKeyPoint2D(BodyPoint.Left_Elbow);
+					KeyPoint2D leftShoulder = GetKeyPoint2D(BodyPoint.Left_Shoulder);
+
+					//double distScale = 1;
+					double armDisp = 0;
+
+					if (leftElbow != null && leftElbow.IsValid)
 					{
-						temp.Add(new KeyPoint3D((int)keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, CalculateZ(keypoint, GetKeyPoint2D(BodyPoint.Left_Elbow), 0.285f), keypoint.Score));
-					}
-					else
-					{
-						temp.Add(new KeyPoint3D((int)keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, 0, keypoint.Score));
+						if (leftShoulder != null && leftShoulder.IsValid)
+						{
+							armDisp = CalculateZ(leftShoulder, leftElbow, Simulated3DSettings.UpperLeftArmLength);
+						}
+
+						double armZ = CalculateZ(keypoint, leftElbow, Simulated3DSettings.LowerLeftArmLength) + armDisp;
+
+						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, armZ, keypoint.Score));
 					}
 				}
+				else if (keypoint.IsValid && keypoint.BodyPoint == BodyPoint.Right_Wrist)
+				{
+					KeyPoint2D rightElbow = GetKeyPoint2D(BodyPoint.Right_Elbow);
+					KeyPoint2D rightShoulder = GetKeyPoint2D(BodyPoint.Right_Shoulder);
 
-				return new Pose3D(temp.ToArray());
+					//double distScale = 1;
+					double armDisp = 0;
+
+					if (rightElbow != null && rightElbow.IsValid)
+					{
+						if (rightShoulder != null && rightShoulder.IsValid)
+						{
+							armDisp = CalculateZ(rightShoulder, rightElbow, Simulated3DSettings.UpperRightArmLength);
+							//distScale += armDisp;
+						}
+
+						double armZ = CalculateZ(keypoint, rightElbow, Simulated3DSettings.LowerRightArmLength) + armDisp;
+
+						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, armZ, keypoint.Score));
+					}
+				}
+				else if (keypoint.IsValid && keypoint.BodyPoint == BodyPoint.Nose_or_Top_Head)
+				{
+					KeyPoint2D neck = GetKeyPoint2D(BodyPoint.Bottom_Neck);
+
+					if (neck != null && neck.IsValid)
+					{
+						double headZ = CalculateZ(keypoint, neck, (OpenPose_Reader.Model == Model.COCO ? Simulated3DSettings.NeckLength_COCO : Simulated3DSettings.NeckLength_MPI));
+
+						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, headZ, keypoint.Score));
+					}
+				}
+				else
+				{
+					temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, 0, keypoint.Score));
+				}
 			}
 
-			return null;
+			return new Pose3D(temp.ToArray());
 		}
 
-		private float CalculateZ(KeyPoint2D keyPointOne, KeyPoint2D keyPointTwo, float length)
+		private double CalculateZ(KeyPoint2D keyPointOne, KeyPoint2D keyPointTwo, double length)
 		{
 			//  _____
 			// /     \
@@ -75,19 +119,91 @@ namespace OpenPose.Pose
 			//  - X diff
 			//  - Y diff
 			//  - Base length [sqrt((|X diff| ^ 2) + (|Y diff| ^ 2))]
-			//  - Hypotenuse length (float length)
+			//  - Hypotenuse length (double length)
 			// Need to get:
 			//  - Z diff
 
 			// Calculation:
 			//  Z diff = sqrt(Hypotenuse length ^ 2 - [(|X diff| ^ 2) + (|Y diff| ^ 2)])
 
-			float x_diff = Math.Abs(keyPointOne.X - keyPointTwo.X);
-			float y_diff = Math.Abs(keyPointOne.Y - keyPointTwo.Y);
+			double x_diff = Math.Abs(keyPointOne.X - keyPointTwo.X);
+			double y_diff = Math.Abs(keyPointOne.Y - keyPointTwo.Y);
 
-			float z_diff = (float) Math.Sqrt(Math.Pow(length, 2) - (Math.Pow(x_diff, 2) + Math.Pow(y_diff, 2)));
+			double z_diff = Math.Sqrt(Math.Pow(length, 2) - (Math.Pow(x_diff, 2) + Math.Pow(y_diff, 2)));
 
 			return z_diff;
+		}
+
+		private double CalculateZAngle(KeyPoint2D keyPointOne, KeyPoint2D keyPointTwo, double length)
+		{
+			//              ^|
+			//             / |
+			// 75 degrees  ->|
+
+			// Known:
+			//  - X diff
+			//  - Y diff
+			//  - Base length [sqrt((|X diff| ^ 2) + (|Y diff| ^ 2))]
+			//  - Hypotenuse length (double length)
+			// Need to get:
+			//  - Z angle
+
+			// Calculation:
+			//  Z angle = Cos^-1(Sqrt((|X diff| ^ 2) + (|Y diff| ^ 2)) / Hypotenuse length)
+
+			double x_diff = Math.Abs(keyPointOne.X - keyPointTwo.X);
+			double y_diff = Math.Abs(keyPointOne.Y - keyPointTwo.Y);
+
+			double z_angle = MathHelpers.RadToDeg(Math.Acos(Math.Sqrt(Math.Pow(x_diff, 2) + Math.Pow(y_diff, 2)) / length));
+
+			return z_angle;
+		}
+
+		private double CalculateBaseAngle(KeyPoint2D keyPointOne, KeyPoint2D keyPointTwo)
+		{
+			//  _____
+			// /     \
+			// |   ->| = 0 degrees
+			// \_____/
+
+			// Desc: Angle from front facing view
+
+			// Known:
+			//  - X diff
+			//  - Y diff
+			//  - Base length [sqrt((|X diff| ^ 2) + (|Y diff| ^ 2))]
+			//  - Hypotenuse length (double length)
+			// Need to get:
+			//  - Z angle
+
+			// Calculation:
+			//  Z angle = Quadrant angle + Tan^-1(|Y diff| / |X diff|)
+
+			double x_diff = keyPointOne.X - keyPointTwo.X;
+			double y_diff = keyPointOne.Y - keyPointTwo.Y;
+
+			double base_angle = MathHelpers.RadToDeg(Math.Atan(Math.Abs(y_diff) / Math.Abs(x_diff)));
+
+			// Handle quadrants other than quadrant 1
+			if (IsPositive(y_diff) && !IsPositive(x_diff))
+			{
+				base_angle += 90;
+			}
+			else if (!IsPositive(y_diff) && !IsPositive(x_diff))
+			{
+				base_angle += 180;
+			}
+			else if (!IsPositive(y_diff) && IsPositive(x_diff))
+			{
+				base_angle += 270;
+			}
+
+			return base_angle;
+		}
+
+		public bool IsPositive(double num)
+		{
+			return num >= 0;
 		}
 	}
 

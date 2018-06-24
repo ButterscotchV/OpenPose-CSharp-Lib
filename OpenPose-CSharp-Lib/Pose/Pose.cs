@@ -13,9 +13,25 @@ namespace OpenPose.Pose
 
 		public KeyPoint GetKeyPoint(BodyPoint bodyPoint)
 		{
-			if ((int)bodyPoint >= 0 && (int)bodyPoint < KeyPoints.Count)
+			if (bodyPoint >= 0 && (int)bodyPoint < KeyPoints.Count)
 			{
-				return KeyPoints[(int)bodyPoint];
+				foreach (KeyPoint keyPoint in KeyPoints)
+				{
+					if (keyPoint.BodyPoint == bodyPoint)
+					{
+						return keyPoint;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		public KeyPoint GetKeyPoint(int index)
+		{
+			if (index >= 0 && index < KeyPoints.Count)
+			{
+				return KeyPoints[index];
 			}
 
 			return null;

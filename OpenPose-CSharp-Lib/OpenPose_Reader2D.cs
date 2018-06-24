@@ -39,6 +39,10 @@ namespace OpenPose
 
 					continue;
 				}
+				else if (PoseQueue.Count > 20)
+				{
+					PoseQueue.RemoveRange(0, PoseQueue.Count - 1);
+				}
 
 				// Parse saved text
 				JObject parsedPose = JObject.Parse(PoseQueue[0]);
@@ -54,20 +58,20 @@ namespace OpenPose
 
 					//Console.WriteLine(parsedPose["people"][0].Value<JArray>("pose_keypoints_2d"));
 
-					//foreach (float f in parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>())
+					//foreach (double f in parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<double>())
 					//{
 					//	Console.WriteLine(f);
 					//}
 
-					float[] keypoints = new List<float> (parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<float>()).ToArray();
+					double[] keypoints = new List<double> (parsedPose["people"][0].Value<JArray>("pose_keypoints_2d").Values<double>()).ToArray();
 
 					if (Simulate3D)
 					{
-						poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints).Simulate3D());
+						poseEventHandler.ExecuteHandlers(Pose2D.ParseDoubleArray(keypoints).Simulate3D());
 					}
 					else
 					{
-						poseEventHandler.ExecuteHandlers(Pose2D.ParseFloatArray(keypoints));
+						poseEventHandler.ExecuteHandlers(Pose2D.ParseDoubleArray(keypoints));
 					}
 				}
 			}

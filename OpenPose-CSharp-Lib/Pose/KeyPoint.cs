@@ -8,7 +8,7 @@ namespace OpenPose.Pose
 {
 	public abstract class KeyPoint
 	{
-		public float Score { get; protected set; }
+		public double Score { get; protected set; }
 		public BodyPoint BodyPoint { get; protected set; }
 
 		public bool IsValid
@@ -18,5 +18,9 @@ namespace OpenPose.Pose
 				return Score > 0;
 			}
 		}
+
+		public double Yaw { get; protected set; }
+		public double Pitch { get; protected set; }
+		public double Roll { get; protected set; }
 	}
 }

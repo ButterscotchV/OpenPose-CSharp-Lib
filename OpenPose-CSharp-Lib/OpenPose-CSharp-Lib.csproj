@@ -55,6 +55,7 @@
     <Compile Include="Pose\Pose3D.cs" />
     <Compile Include="Pose\Pose2D.cs" />
     <Compile Include="Events\PoseEventHandler.cs" />
+    <Compile Include="Pose\Simulated3DSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

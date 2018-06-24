@@ -2,10 +2,10 @@
 {
 	public class KeyPoint2D : KeyPoint
 	{
-		public float Raw_X { get; private set; }
-		public float Raw_Y { get; private set; }
+		public double Raw_X { get; private set; }
+		public double Raw_Y { get; private set; }
 
-		public float X
+		public double X
 		{
 			get
 			{
@@ -13,7 +13,7 @@
 			}
 		}
 
-		public float Y
+		public double Y
 		{
 			get
 			{
@@ -22,15 +22,15 @@
 		}
 
 		// Maximums are used for inverting the values
-		public static float Max_X = 0;
-		public static float Max_Y = 720;
+		public static double Max_X = 0;
+		public static double Max_Y = 720;
 
 		// These should be in the unit meters per pixel (m/p)
-		public static float X_Scale_MPP = 1;
-		public static float Y_Scale_MPP = 1;
+		public static double X_Scale_MPP = 1;
+		public static double Y_Scale_MPP = 1;
 
 		// Scales but in pixels per meter (p/m)
-		public static float X_Scale_PPM
+		public static double X_Scale_PPM
 		{
 			get
 			{
@@ -43,7 +43,7 @@
 			}
 		}
 
-		public static float Y_Scale_PPM
+		public static double Y_Scale_PPM
 		{
 			get
 			{
@@ -56,13 +56,48 @@
 			}
 		}
 
-		public KeyPoint2D(int pointNum, float x, float y, float score)
+		public KeyPoint2D(int pointNum, double x, double y, double score)
 		{
 			Raw_X = x;
 			Raw_Y = y;
 			Score = score;
 
 			BodyPoint = (BodyPoint)pointNum;
+		}
+
+		public KeyPoint2D(BodyPoint bodyPoint, double x, double y, double score)
+		{
+			Raw_X = x;
+			Raw_Y = y;
+			Score = score;
+
+			BodyPoint = bodyPoint;
+		}
+
+		public KeyPoint2D(int pointNum, double x, double y, double score, double yaw, double pitch, double roll)
+		{
+			Raw_X = x;
+			Raw_Y = y;
+			Score = score;
+
+			Yaw = yaw;
+			Pitch = pitch;
+			Roll = roll;
+
+			BodyPoint = (BodyPoint)pointNum;
+		}
+
+		public KeyPoint2D(BodyPoint bodyPoint, double x, double y, double score, double yaw, double pitch, double roll)
+		{
+			Raw_X = x;
+			Raw_Y = y;
+			Score = score;
+
+			Yaw = yaw;
+			Pitch = pitch;
+			Roll = roll;
+
+			BodyPoint = bodyPoint;
 		}
 
 		override
