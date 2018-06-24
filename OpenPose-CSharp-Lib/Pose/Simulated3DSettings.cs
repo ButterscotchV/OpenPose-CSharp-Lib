@@ -10,10 +10,13 @@ namespace OpenPose.Pose
 	{
 		// These default values are measurements for me
 
-		public static double LengthScale = 0.95;
+		public static double LengthScale = 0.975;
 
 		public static double NeckLength_MPI = 0.233 * LengthScale;
-		public static double NeckLength_COCO = 0.233 * LengthScale;
+		public static double NeckLength_COCO = 0.195 * LengthScale;
+
+		public static double EyeDist = 0.06 * LengthScale;
+		public static double NoseToBetweenEyes = 0.055 * LengthScale;
 
 		public static double UpperBodyLength = 0.36 * LengthScale;
 		public static double LowerBodyLength = 0.285 * LengthScale;
