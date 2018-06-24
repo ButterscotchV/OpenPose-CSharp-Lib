@@ -53,23 +53,19 @@ namespace OpenPose.Pose
 					KeyPoint2D leftShoulder = GetKeyPoint2D(BodyPoint.Left_Shoulder);
 
 					//double distScale = 1;
-					double armDisp = 0;
+					double armZ = 0;
 
 					if (leftElbow != null && leftElbow.IsValid)
 					{
 						if (leftShoulder != null && leftShoulder.IsValid)
 						{
-							armDisp = CalculateZ(leftShoulder, leftElbow, Simulated3DSettings.UpperLeftArmLength);
+							armZ += CalculateZ(leftShoulder, leftElbow, Simulated3DSettings.UpperLeftArmLength);
 						}
 
-						double armZ = CalculateZ(keypoint, leftElbow, Simulated3DSettings.LowerLeftArmLength) + armDisp;
+						armZ += CalculateZ(keypoint, leftElbow, Simulated3DSettings.LowerLeftArmLength);
+					}
 
-						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, armZ, keypoint.Score));
-					}
-					else
-					{
-						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, 0, keypoint.Score));
-					}
+					temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, armZ, keypoint.Score));
 				}
 				else if (keypoint.IsValid && keypoint.BodyPoint == BodyPoint.Right_Wrist)
 				{
@@ -77,24 +73,20 @@ namespace OpenPose.Pose
 					KeyPoint2D rightShoulder = GetKeyPoint2D(BodyPoint.Right_Shoulder);
 
 					//double distScale = 1;
-					double armDisp = 0;
+					double armZ = 0;
 
 					if (rightElbow != null && rightElbow.IsValid)
 					{
 						if (rightShoulder != null && rightShoulder.IsValid)
 						{
-							armDisp = CalculateZ(rightShoulder, rightElbow, Simulated3DSettings.UpperRightArmLength);
+							armZ += CalculateZ(rightShoulder, rightElbow, Simulated3DSettings.UpperRightArmLength);
 							//distScale += armDisp;
 						}
 
-						double armZ = CalculateZ(keypoint, rightElbow, Simulated3DSettings.LowerRightArmLength) + armDisp;
+						armZ += CalculateZ(keypoint, rightElbow, Simulated3DSettings.LowerRightArmLength);
+					}
 
-						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, armZ, keypoint.Score));
-					}
-					else
-					{
-						temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, 0, keypoint.Score));
-					}
+					temp.Add(new KeyPoint3D(keypoint.BodyPoint, keypoint.Raw_X, keypoint.Raw_Y, armZ, keypoint.Score));
 				}
 				else if (keypoint.IsValid && keypoint.BodyPoint == BodyPoint.Nose_or_Top_Head)
 				{
