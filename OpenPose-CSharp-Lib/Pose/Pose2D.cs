@@ -123,6 +123,8 @@ namespace OpenPose.Pose
 					if (neck != null && neck.IsValid)
 					{
 						headZ = CalculateZ(keypoint, neck, (OpenPose_Reader.Model == Model.COCO ? Simulated3DSettings.NeckLength_COCO : Simulated3DSettings.NeckLength_MPI));
+
+						headPitch = -CalculateZAngle(keypoint, neck, (OpenPose_Reader.Model == Model.COCO ? Simulated3DSettings.NeckLength_COCO : Simulated3DSettings.NeckLength_MPI));
 					}
 
 					if (OpenPose_Reader.Model == Model.COCO)
@@ -138,9 +140,6 @@ namespace OpenPose.Pose
 							KeyPoint2D rightEar = GetKeyPoint2D(BodyPoint.Right_Ear);
 
 							headYaw = (leftEar != null && leftEar.IsValid) || (rightEar == null || !rightEar.IsValid) ? headYaw : -headYaw;
-
-							KeyPoint2D averageEyes = new KeyPoint2D(BodyPoint.Left_Eye, (leftEye.X + rightEye.X) / 2, (leftEye.Y + rightEye.Y) / 2, (leftEye.Score + rightEye.Score));
-							headPitch = CalculateZAngle(averageEyes, keypoint, Simulated3DSettings.NoseToBetweenEyes);
 						}
 					}
 
