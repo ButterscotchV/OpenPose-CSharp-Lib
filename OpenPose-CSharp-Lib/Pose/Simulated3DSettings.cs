@@ -10,7 +10,7 @@ namespace OpenPose.Pose
 	{
 		// These default values are measurements for me
 
-		public static double LengthScale = 0.975;
+		public static double LengthScale = 1;
 
 		public static double NeckLength_MPI = 0.233 * LengthScale;
 		public static double NeckLength_COCO = 0.195 * LengthScale;
@@ -52,8 +52,8 @@ namespace OpenPose.Pose
 			}
 		}
 
-		public static double LowerLeftArmLength = 0.305 * LengthScale;
-		public static double LowerRightArmLength = 0.305 * LengthScale;
+		public static double LowerLeftArmLength = 0.285 * LengthScale;
+		public static double LowerRightArmLength = 0.285 * LengthScale;
 
 		public static double LowerArmLength
 		{
